@@ -1,6 +1,11 @@
 "use strict";
 
-var utils = require('./utils.js')
+var utils = require('./utils.js');
+var {MapGen} = require('./MapGen');
+
+var mg = new MapGen();
+
+mg.draw();
 
 const BORDER_START_X = 50;
 const BORDER_START_Y = 50;
@@ -17,9 +22,9 @@ c.moveTo(BORDER_START_X, BORDER_START_Y);
 var x = BORDER_START_X;
 var y = BORDER_START_Y;
 for (var i=0; i<BORDER_MAX_STEPS; i++) {
-	x = x + utils.rand(MIN_STEP_PIXELS, MAX_STEP_PIXELS);
-	y = y + utils.rand(MIN_STEP_PIXELS, MAX_STEP_PIXELS);
-    c.lineTo(x, y);
+  x = x + utils.rand(MIN_STEP_PIXELS, MAX_STEP_PIXELS);
+  y = y + utils.rand(MIN_STEP_PIXELS, MAX_STEP_PIXELS);
+  c.lineTo(x, y);
 }
 
 c.lineTo(BORDER_START_X, BORDER_START_Y);
