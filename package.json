@@ -1,0 +1,12 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "scripts": {
+    "build": "node_modules/.bin/webpack --config webpack.config.js",
+    "start:dev": "webpack-dev-server --hot"
+  }
+}
