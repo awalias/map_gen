@@ -1,13 +1,36 @@
 import {rand, point, angle, Coordinate} from './utils';
 
 export class MapGen {
+  private debug_mode: boolean = false;
+  private COLOR_SEA_BLUE: string = "#7981c9";
+  private COLOR_LAND_GREEN: string = "#bcae86";
   private context: CanvasRenderingContext2D;
+
   private number_of_guide_points: number;
   private map_radius: number;
+  private major_city_min: number = 1;
+  private major_city_max: number = 3;
+  private minor_city_min: number = 1;
+  private minor_city_max: number = 5;
+  private motorways_min: number = 1;
+  private motorway_max: number = 5;
+  private major_roads_min: number = 5;
+  private major_roads_max: number = 10;
+  private minor_roads_min: number = 10;
+  private minor_roads_max: number = 30;
+  private county_border_points_min: number = 0;
+  private county_border_points_max: number = 5;
+  private county_border_count_min: number = 0;
+  private county_border_count_max: number = 10;
+  private river_seed_min: number = 1;
+  private river_seed_max: number = 10;
+  private lake_count_min: number = 0;
+  private lake_count_max: number = 10;
+
+  private circle_center_offset: Coordinate = [50, 50];
+  private circle_center_coord: Coordinate;
   private guide_points: Coordinate[] = [];
   private border_points: Coordinate[] = [];
-  private debug_mode: boolean = false;
-  private circle_center_coord: Coordinate;
 
   constructor(context: CanvasRenderingContext2D,
               number_of_guide_points: number,
@@ -17,7 +40,7 @@ export class MapGen {
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
     this.debug_mode = debug_mode;
-    this.circle_center_coord = [map_radius + 50, map_radius + 50];
+    this.circle_center_coord = [map_radius + this.circle_center_offset[0], map_radius + this.circle_center_offset[1]];
   }
 
   generateRandomGuidePoints() {
@@ -39,7 +62,6 @@ export class MapGen {
   }
 
   generateBorder() {
-
     const max_inner_iterations: number = 10;
     let current_point: Coordinate = this.guide_points[0];
 
@@ -55,7 +77,7 @@ export class MapGen {
     }
   }
 
-  getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number, n_steps) {
+  getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number, n_steps: number) {
     const abs_distance = Math.hypot(target_point[0]-current_point[0], target_point[1]-current_point[1]);
     const min_noise: number = -0.2 * abs_distance;
     const max_noise: number = 0.2 * abs_distance;
@@ -83,7 +105,7 @@ export class MapGen {
     }
 
     // fill background
-    this.context.fillStyle = "#7981c9";
+    this.context.fillStyle = this.COLOR_SEA_BLUE;
     this.context.fillRect(0, 0, 600, 600);
 
     // make regular drawings
@@ -101,7 +123,7 @@ export class MapGen {
     //this.context.stroke();
 
     // fill land
-    this.context.fillStyle = "#bcae86";
+    this.context.fillStyle = this.COLOR_LAND_GREEN;
     this.context.fill();
   }
 
