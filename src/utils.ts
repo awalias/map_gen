@@ -16,3 +16,12 @@ export async function point(x: number, y: number, context: CanvasRenderingContex
 export function angle(a: Coordinate, b: Coordinate): number {
 	return Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
 }
+
+// wait used for animated debugging
+export function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}
