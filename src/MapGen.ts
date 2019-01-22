@@ -17,7 +17,7 @@ export class MapGen {
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
     this.debug_mode = debug_mode;
-    this.circle_center_coord = [map_radius, map_radius];
+    this.circle_center_coord = [map_radius + 50, map_radius + 50];
   }
 
   generateRandomGuidePoints() {
@@ -47,7 +47,7 @@ export class MapGen {
 
       for (let j=1; j<max_inner_iterations; j++) {
 
-        let new_point: Coordinate = this.getRandomBorderPoint(current_point, this.guide_points[i], j);
+        let new_point: Coordinate = this.getRandomBorderPoint(current_point, this.guide_points[i], j, max_inner_iterations);
         this.border_points.push(new_point);
         current_point = new_point;
 
@@ -55,11 +55,11 @@ export class MapGen {
     }
   }
 
-  getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number) {
+  getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number, n_steps) {
     const abs_distance = Math.hypot(target_point[0]-current_point[0], target_point[1]-current_point[1]);
-    const min_noise: number = -0.1 * abs_distance;
-    const max_noise: number = 0.1 * abs_distance;
-    let step_distance = j/10;
+    const min_noise: number = -0.2 * abs_distance;
+    const max_noise: number = 0.2 * abs_distance;
+    let step_distance = j/n_steps;
     let intermediate_point: Coordinate = [0,0];
 
     // get point on line 1/10th the way from current to target
@@ -88,8 +88,11 @@ export class MapGen {
 
     for (let i=1; i<this.border_points.length; i++) {
       this.context.lineTo(this.border_points[i][0], this.border_points[i][1]);
-      this.context.stroke();
     }
+
+    // close the path and draw line
+    this.context.lineTo(this.border_points[0][0], this.border_points[0][1]);
+    this.context.stroke();
   }
 
   draw_debug() {
@@ -97,11 +100,11 @@ export class MapGen {
     this.context.beginPath(); 
     this.context.moveTo(this.guide_points[0][0], this.guide_points[0][1]);
 
-    // // connect cirlce plot points
-    // for (let i=1; i<this.guide_points.length; i++) {
-    //   this.context.lineTo(this.guide_points[i][0], this.guide_points[i][1]);
-    //   this.context.stroke();
-    // }
+    // connect cirlce plot points
+    for (let i=1; i<this.guide_points.length; i++) {
+      this.context.lineTo(this.guide_points[i][0], this.guide_points[i][1]);
+      this.context.stroke();
+    }
 
     // draw circle points
     for (let i=1; i<this.guide_points.length; i++) {
