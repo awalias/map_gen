@@ -1,4 +1,4 @@
-import {rand, point, angle, Coordinate, wait} from './utils';
+import {rand, point, angle, Coordinate} from './utils';
 
 export class MapGen {
   private context: CanvasRenderingContext2D;
@@ -82,6 +82,10 @@ export class MapGen {
       this.draw_debug();
     }
 
+    // fill background
+    this.context.fillStyle = "#7981c9";
+    this.context.fillRect(0, 0, 600, 600);
+
     // make regular drawings
     this.context.beginPath(); 
     this.context.moveTo(this.border_points[0][0], this.border_points[0][1]);
@@ -90,9 +94,15 @@ export class MapGen {
       this.context.lineTo(this.border_points[i][0], this.border_points[i][1]);
     }
 
-    // close the path and draw line
+    // close the path
     this.context.lineTo(this.border_points[0][0], this.border_points[0][1]);
-    this.context.stroke();
+
+    // draw outer border
+    //this.context.stroke();
+
+    // fill land
+    this.context.fillStyle = "#bcae86";
+    this.context.fill();
   }
 
   draw_debug() {
