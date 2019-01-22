@@ -1,20 +1,28 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: ['babel-polyfill', './src/main.ts'],
   mode: 'development',
   "output": {
     path: path.join(__dirname, 'build'),
     publicPath: "/build/",
     "filename": "bundle.js"
   },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js"]
+  },
   module: {
-    rules: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
+    rules: [
+    {
+      test: /\.tsx?$/,
       use: {
-        loader: 'babel-loader',
+         loader: 'babel-loader',
       }
+    },
+    {
+      test: /\.js$/,
+      use: ["source-map-loader"],
+      enforce: "pre"
     }]
   }
 };
