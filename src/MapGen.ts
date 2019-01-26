@@ -31,6 +31,8 @@ export class MapGen {
   private circle_center_coord: Coordinate;
   private guide_points: Coordinate[] = [];
   private border_points: Coordinate[] = [];
+  private major_cities: Coordinate[] = [];
+  private minor_cities: Coordinate[] = [];
 
   constructor(context: CanvasRenderingContext2D,
               number_of_guide_points: number,
@@ -61,6 +63,28 @@ export class MapGen {
     this.guide_points.push(this.guide_points[0]);
   }
 
+  generateRandomCityPoints() {
+    // major cities
+    for (let i=0; i<rand(this.major_city_min, this.major_city_max); i++) {
+      let new_point: Coordinate = this.getRandomPoint();
+      if (this.context.isPointInPath(new_point[0], new_point[1])) {
+        this.major_cities.push(new_point);
+      } else {
+        i--;
+      }
+    }
+
+    // minor cities
+    for (let i=0; i<rand(this.minor_city_min, this.minor_city_max); i++) {
+      let new_point: Coordinate = this.getRandomPoint();
+      if (this.context.isPointInPath(new_point[0], new_point[1])) {
+        this.minor_cities.push(new_point);
+      } else {
+        i--;
+      }
+    }
+  }
+
   generateBorder() {
     const max_inner_iterations: number = 10;
     let current_point: Coordinate = this.guide_points[0];
@@ -75,6 +99,12 @@ export class MapGen {
 
       }
     }
+  }
+
+  getRandomPoint(): Coordinate {
+    let point_x: number = rand(0, this.context.canvas.clientWidth);
+    let point_y: number = rand(0, this.context.canvas.clientHeight);
+    return [point_x, point_y];
   }
 
   getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number, n_steps: number) {
@@ -97,6 +127,16 @@ export class MapGen {
   plot() {
     this.generateRandomGuidePoints();
     this.generateBorder();
+  }
+
+  plotIsPointInPathMethods() {
+    this.generateRandomCityPoints();
+  }
+
+  drawIsPointInPathMethods() {
+    for (let i=0; i<this.major_cities.length; i++) {
+      point(this.major_cities[i][0], this.major_cities[i][1], this.context);
+    }
   }
 
   draw() {
@@ -122,9 +162,15 @@ export class MapGen {
     // draw outer border
     //this.context.stroke();
 
+    // anything that uses isPointInPath should be done here:
+    this.plotIsPointInPathMethods();
+
     // fill land
     this.context.fillStyle = this.COLOR_LAND_GREEN;
     this.context.fill();
+
+    // draw other features that rely on point in path method
+    this.drawIsPointInPathMethods();
   }
 
   draw_debug() {

@@ -10,6 +10,7 @@ export function rand(min: number, max: number) {
 export async function point(x: number, y: number, context: CanvasRenderingContext2D): Promise<void>  {
   context.beginPath();
   context.arc(x, y, 1, 0, 2 * Math.PI, true);
+  context.fillStyle = "#000000";
   context.fill();	
 }
 
