@@ -34,14 +34,24 @@ export class MapGen {
   private major_cities: Coordinate[] = [];
   private minor_cities: Coordinate[] = [];
 
+  private major_city_labels: string[] = [];
+  private minor_city_labels: string[] = [];
+
+  private city_label_dictionary: string[] = [];
+  private city_label_suffixes: string[] = [];
+
   constructor(context: CanvasRenderingContext2D,
               number_of_guide_points: number,
               map_radius: number,
-              debug_mode: boolean) {
+              debug_mode: boolean,
+              city_label_dictionary: string[],
+              city_label_suffixes: string[]) {
     this.context = context;
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
     this.debug_mode = debug_mode;
+    this.city_label_dictionary = city_label_dictionary;
+    this.city_label_suffixes = city_label_suffixes;
     this.circle_center_coord = [map_radius + this.circle_center_offset[0], map_radius + this.circle_center_offset[1]];
   }
 
@@ -66,23 +76,42 @@ export class MapGen {
   generateRandomCityPoints() {
     // major cities
     for (let i=0; i<rand(this.major_city_min, this.major_city_max); i++) {
-      let new_point: Coordinate = this.getRandomPoint();
-      if (this.context.isPointInPath(new_point[0], new_point[1])) {
-        this.major_cities.push(new_point);
-      } else {
-        i--;
-      }
+      let new_point: Coordinate = this.getRandomPointOnLand();
+      this.major_cities.push(new_point);
     }
 
     // minor cities
     for (let i=0; i<rand(this.minor_city_min, this.minor_city_max); i++) {
-      let new_point: Coordinate = this.getRandomPoint();
-      if (this.context.isPointInPath(new_point[0], new_point[1])) {
-        this.minor_cities.push(new_point);
-      } else {
-        i--;
-      }
+      let new_point: Coordinate = this.getRandomPointOnLand();
+      this.minor_cities.push(new_point);
     }
+
+    this.generateRandomCityLabels();
+  }
+
+  generateRandomCityLabels() {
+    for (let i=0; i<this.major_cities.length; i++) {
+      this.major_city_labels.push(this.getRandomCityLabel());
+    }
+
+    for (let i=0; i<this.minor_cities.length; i++) {
+      this.minor_city_labels.push(this.getRandomCityLabel());
+    }
+  }
+
+  getRandomCityLabel(): string {
+    let label: string = "";
+    label = label.concat(this.city_label_dictionary[rand(0, this.city_label_dictionary.length-1)]);
+
+    label = label.concat(" ");
+    label = label.concat(this.city_label_dictionary[rand(0, this.city_label_dictionary.length-1)]);
+
+    if (rand(0,1)) {
+      label = label.concat(" ");
+      label = label.concat(this.city_label_suffixes[rand(0, this.city_label_suffixes.length-1)]);
+    }
+
+    return label;
   }
 
   generateBorder() {
@@ -101,10 +130,20 @@ export class MapGen {
     }
   }
 
-  getRandomPoint(): Coordinate {
+  getRandomPoint():Coordinate {
     let point_x: number = rand(0, this.context.canvas.clientWidth);
     let point_y: number = rand(0, this.context.canvas.clientHeight);
     return [point_x, point_y];
+  }
+
+  getRandomPointOnLand(): Coordinate {
+    let point: Coordinate = [0,0]
+
+    while (!this.context.isPointInPath(point[0], point[1])) {
+      point = this.getRandomPoint();
+    }
+
+    return point;
   }
 
   getRandomBorderPoint(current_point: Coordinate, target_point: Coordinate, j: number, n_steps: number) {
@@ -134,8 +173,16 @@ export class MapGen {
   }
 
   drawIsPointInPathMethods() {
+    // draw major cities
     for (let i=0; i<this.major_cities.length; i++) {
       point(this.major_cities[i][0], this.major_cities[i][1], this.context);
+      this.context.fillText(this.major_city_labels[i], this.major_cities[i][0], this.major_cities[i][1]);
+    }
+
+    // draw minor cities
+    for (let i=0; i<this.minor_cities.length; i++) {
+      point(this.minor_cities[i][0], this.minor_cities[i][1], this.context);
+      this.context.fillText(this.minor_city_labels[i], this.minor_cities[i][0], this.minor_cities[i][1]);
     }
   }
 
