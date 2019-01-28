@@ -4,6 +4,8 @@ export class MapGen {
   private debug_mode: boolean = false;
   private COLOR_SEA_BLUE: string = "#7981c9";
   private COLOR_LAND_GREEN: string = "#bcae86";
+  private COLOR_TEXT_SHADOW: string = "#ffffff"
+  private COLOR_TEXT_LABEL: string = "#000000";
   private context: CanvasRenderingContext2D;
 
   private number_of_guide_points: number;
@@ -27,6 +29,10 @@ export class MapGen {
   private lake_count_min: number = 0;
   private lake_count_max: number = 10;
 
+  private major_city_point_radius: number = 1.5;
+  private minor_city_point_radius: number = 1.5;
+
+  private text_offset: Coordinate = [5, 10];
   private circle_center_offset: Coordinate = [50, 50];
   private circle_center_coord: Coordinate;
   private guide_points: Coordinate[] = [];
@@ -175,14 +181,24 @@ export class MapGen {
   drawIsPointInPathMethods() {
     // draw major cities
     for (let i=0; i<this.major_cities.length; i++) {
-      point(this.major_cities[i][0], this.major_cities[i][1], this.context);
-      this.context.fillText(this.major_city_labels[i], this.major_cities[i][0], this.major_cities[i][1]);
+      point(this.major_cities[i][0], this.major_cities[i][1], this.major_city_point_radius, this.context);
+      this.context.font = "14px Helvetica";
+
+      this.context.shadowColor = this.COLOR_TEXT_SHADOW;
+      this.context.shadowBlur = 4;
+      this.context.fillStyle = this.COLOR_TEXT_LABEL;
+      this.context.fillText(this.major_city_labels[i], this.major_cities[i][0]+this.text_offset[0], this.major_cities[i][1]+this.text_offset[1]);
     }
 
     // draw minor cities
     for (let i=0; i<this.minor_cities.length; i++) {
-      point(this.minor_cities[i][0], this.minor_cities[i][1], this.context);
-      this.context.fillText(this.minor_city_labels[i], this.minor_cities[i][0], this.minor_cities[i][1]);
+      point(this.minor_cities[i][0], this.minor_cities[i][1], this.minor_city_point_radius, this.context);
+      this.context.font = "12px Helvetica";
+
+      this.context.shadowColor = this.COLOR_TEXT_SHADOW;
+      this.context.shadowBlur = 4;
+      this.context.fillStyle = this.COLOR_TEXT_LABEL;
+      this.context.fillText(this.minor_city_labels[i], this.minor_cities[i][0]+this.text_offset[0], this.minor_cities[i][1]+this.text_offset[1]);
     }
   }
 
@@ -233,10 +249,10 @@ export class MapGen {
 
     // draw circle points
     for (let i=1; i<this.guide_points.length; i++) {
-      point(this.guide_points[i][0], this.guide_points[i][1], this.context);
+      point(this.guide_points[i][0], this.guide_points[i][1], 2, this.context);
     }
 
     // draw circle center
-    point(this.circle_center_coord[0], this.circle_center_coord[1], this.context);
+    point(this.circle_center_coord[0], this.circle_center_coord[1], 2, this.context);
   }
 }
