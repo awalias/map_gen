@@ -15,5 +15,6 @@ var canvas = <HTMLCanvasElement> document.getElementById('map');
 var c = canvas.getContext('2d');
 var mg = new MapGen(c, NUMBER_OF_GUIDE_POINTS, MAP_RADIUS, DEBUG_MODE, NAMES, SUFFIXES);
 
-mg.plot();
-mg.draw();
+mg.plot().then(function(){
+  mg.draw();
+})

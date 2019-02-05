@@ -6,7 +6,10 @@ export class MapGen {
   private color_land_green: string = "#bcae86";
   private color_text_shadow: string = "#ffffff"
   private color_text_label: string = "#000000";
-  private color_motorway_main: string = "#ebc247"
+  private color_motorway_main: string = "#ebc247";
+  private color_county_border: string = "#555555";
+  private county_border_line_width: number = 1;
+  private county_border_line_dash: [number , number] = [3, 3];
   private motorway_line_width: number = 2;
   private context: CanvasRenderingContext2D;
 
@@ -16,14 +19,10 @@ export class MapGen {
   private major_city_max: number = 3;
   private minor_city_min: number = 1;
   private minor_city_max: number = 5;
-  private motorways_min: number = 1;
-  private motorways_max: number = 5;
+  private motorways_min: number = 4;
+  private motorways_max: number = 6;
   private major_roads_min: number = 5;
   private major_roads_max: number = 10;
-  private county_border_points_min: number = 0;
-  private county_border_points_max: number = 5;
-  private county_border_count_min: number = 0;
-  private county_border_count_max: number = 10;
   private river_seed_min: number = 1;
   private river_seed_max: number = 10;
   private lake_count_min: number = 0;
@@ -41,6 +40,11 @@ export class MapGen {
   private minor_cities: Coordinate[] = [];
 
   private motorways: Coordinate[][] = [];
+
+  private outer_county_border_point_count: number = 40;
+  private inner_county_border_point_count: number = 6;
+  private outer_county_border_points: Coordinate[] = [];
+  private inner_county_border_points: Coordinate[] = [];
 
   private major_city_labels: string[] = [];
   private minor_city_labels: string[] = [];
@@ -120,6 +124,37 @@ export class MapGen {
     }
 
     return label;
+  }
+
+  generateCountyBorders() {
+    // get some random points on shoreline
+    for (let i=1; i<this.outer_county_border_point_count; i++) {
+      let new_point: Coordinate = this.border_points[rand(0,this.border_points.length-1)];
+      this.outer_county_border_points.push(new_point);
+    }
+
+    // reorder outer points by angle to X-axis
+    var self = this;
+    this.outer_county_border_points.sort(function (a: Coordinate, b: Coordinate) {
+      return angle(a, self.circle_center_coord) - angle(b, self.circle_center_coord);
+    });
+
+    // get some random points on land
+    for (let i=1; i<this.inner_county_border_point_count; i++) {
+      this.inner_county_border_points.push(this.getRandomPointOnLand());
+    }
+
+    // reorder inner points by angle to X-axis
+    this.inner_county_border_points.sort(function (a: Coordinate, b: Coordinate) {
+      return angle(a, self.circle_center_coord) - angle(b, self.circle_center_coord);
+    });
+
+
+    // for each point on shore - connect to nearest inner point
+
+
+    // connect each inner point to the next
+
   }
 
   generateBorder() {
@@ -235,7 +270,24 @@ export class MapGen {
     return motorway;
   }
 
-  plot() {
+  getNearestPoint(point: Coordinate, point_array: Coordinate[]) {
+    let min_distance: number = 99999;
+    let nearest_point: Coordinate = point_array[0];
+
+    for (let i=0; i<point_array.length; i++) {
+      let a = point[0] - point_array[i][0];
+      let b = point[1] - point_array[i][1];
+      let c = Math.sqrt( a*a + b*b );
+      if (c < min_distance) {
+        min_distance = c;
+        nearest_point = point_array[i];
+      }
+    }
+
+    return nearest_point;
+  }
+
+  async plot() {
     this.generateRandomGuidePoints();
     this.generateBorder();
   }
@@ -243,9 +295,47 @@ export class MapGen {
   plotIsPointInPathMethods() {
     this.generateRandomCityPoints();
     this.generateMotorways();
+    this.generateCountyBorders();
   }
 
   drawIsPointInPathMethods() {
+
+    // draw motorways
+    for (let i=0; i<this.motorways.length; i++) {
+      this.context.strokeStyle = this.color_motorway_main;
+      this.context.lineWidth = this.motorway_line_width;
+      this.context.beginPath();
+      this.context.moveTo(this.motorways[i][0][0], this.motorways[i][0][1]);
+
+      // connect cirlce plot points
+      for (let j=1; j<this.motorways[i].length; j++) {
+        this.context.lineTo(this.motorways[i][j][0], this.motorways[i][j][1]);
+        this.context.stroke();
+      }
+    }
+
+    // draw county borders
+    this.context.strokeStyle = this.color_county_border;
+    this.context.setLineDash(this.county_border_line_dash);
+    this.context.lineWidth = this.county_border_line_width;
+    this.context.beginPath();
+    this.context.moveTo(this.inner_county_border_points[0][0], this.inner_county_border_points[0][1]);
+    for (let i=0; i<this.inner_county_border_points.length; i++) {
+        this.context.lineTo(this.inner_county_border_points[i][0], this.inner_county_border_points[i][1]);
+    }
+    this.context.closePath();
+    this.context.stroke();
+
+    // connect inner county border nodes to shore line
+    for (let i=0; i<this.inner_county_border_points.length; i++) {
+        this.context.beginPath();
+        this.context.moveTo(this.inner_county_border_points[i][0], this.inner_county_border_points[i][1]);
+        let nearest_shore_point = this.getNearestPoint(this.inner_county_border_points[i], this.outer_county_border_points);
+        this.context.lineTo(nearest_shore_point[0], nearest_shore_point[1]);
+        this.context.stroke();
+    }
+    this.context.setLineDash([]);
+
     // draw major cities
     for (let i=0; i<this.major_cities.length; i++) {
       point(this.major_cities[i][0], this.major_cities[i][1], this.major_city_point_radius, this.context);
@@ -270,20 +360,6 @@ export class MapGen {
       this.context.fillText(this.minor_city_labels[i], this.minor_cities[i][0]+this.text_offset[0], this.minor_cities[i][1]+this.text_offset[1]);
       this.context.shadowColor = "rgba(0,0,0,0)";
       this.context.shadowBlur = 0;
-    }
-
-    // draw motorways
-    for (let i=0; i<this.motorways.length; i++) {
-      this.context.strokeStyle = this.color_motorway_main;
-      this.context.lineWidth = this.motorway_line_width;
-      this.context.beginPath();
-      this.context.moveTo(this.motorways[i][0][0], this.motorways[i][0][1]);
-
-      // connect cirlce plot points
-      for (let j=1; j<this.motorways[i].length; j++) {
-        this.context.lineTo(this.motorways[i][j][0], this.motorways[i][j][1]);
-        this.context.stroke();
-      }
     }
   }
 
