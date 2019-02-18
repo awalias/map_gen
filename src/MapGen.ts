@@ -2,12 +2,12 @@ import {rand, point, angle, Coordinate} from './utils';
 
 export class MapGen {
   private debug_mode: boolean = false;
-  private color_sea_blue: string = "#7981c9";
+  private color_sea_blue: string = "#aadaff";
   private color_land_green: string = "#bcae86";
   private color_text_shadow: string = "#ffffff"
   private color_text_label: string = "#000000";
-  private color_motorway_main: string = "#ebc247";
-  private color_county_border: string = "#555555";
+  private color_motorway_main: string = "#ffeba1";
+  private color_county_border: string = "#a8a8a8";
   private county_border_line_width: number = 1;
   private county_border_line_dash: [number , number] = [3, 3];
   private motorway_line_width: number = 2;
@@ -45,6 +45,7 @@ export class MapGen {
   private inner_county_border_point_count: number = 6;
   private outer_county_border_points: Coordinate[] = [];
   private inner_county_border_points: Coordinate[] = [];
+  private county_borders: Coordinate[][] = []
 
   private major_city_labels: string[] = [];
   private minor_city_labels: string[] = [];
@@ -52,12 +53,16 @@ export class MapGen {
   private city_label_dictionary: string[] = [];
   private city_label_suffixes: string[] = [];
 
+  private county_start_and_end_points: Coordinate[][] = [];
+  private background_texture: HTMLImageElement;
+
   constructor(context: CanvasRenderingContext2D,
               number_of_guide_points: number,
               map_radius: number,
               debug_mode: boolean,
               city_label_dictionary: string[],
-              city_label_suffixes: string[]) {
+              city_label_suffixes: string[],
+              backgroud_texture: HTMLImageElement) {
     this.context = context;
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
@@ -65,6 +70,7 @@ export class MapGen {
     this.city_label_dictionary = city_label_dictionary;
     this.city_label_suffixes = city_label_suffixes;
     this.circle_center_coord = [map_radius + this.circle_center_offset[0], map_radius + this.circle_center_offset[1]];
+    this.background_texture = backgroud_texture;
   }
 
   generateRandomGuidePoints() {
@@ -116,12 +122,7 @@ export class MapGen {
     label = label.concat(this.city_label_dictionary[rand(0, this.city_label_dictionary.length-1)]);
 
     label = label.concat(" ");
-    label = label.concat(this.city_label_dictionary[rand(0, this.city_label_dictionary.length-1)]);
-
-    if (rand(0,1)) {
-      label = label.concat(" ");
-      label = label.concat(this.city_label_suffixes[rand(0, this.city_label_suffixes.length-1)]);
-    }
+    label = label.concat(this.city_label_suffixes[rand(0, this.city_label_suffixes.length-1)]);
 
     return label;
   }
@@ -150,11 +151,49 @@ export class MapGen {
     });
 
 
-    // for each point on shore - connect to nearest inner point
+    // generate actual border lines
+    // starting with start and end points
+    //let county_start_and_end_points: Coordinate[][] = [];
+    for (let i=0; i<this.inner_county_border_points.length-1; i++) {
+      this.county_start_and_end_points.push([this.inner_county_border_points[i], this.inner_county_border_points[i+1]]);
+    }
+    // connect last point to first
+    this.county_start_and_end_points.push([this.inner_county_border_points[this.inner_county_border_points.length-1], this.inner_county_border_points[0]]);
 
+    // connect each inner point with the nearest shore/border point
+    for (let i=0; i<this.inner_county_border_points.length; i++) {
+      this.county_start_and_end_points.push([this.inner_county_border_points[i], this.getNearestPoint(this.inner_county_border_points[i], this.outer_county_border_points)]);
+    }
 
-    // connect each inner point to the next
+    // use start and end points to generate more random looking borders
+    for (let i=0; i<this.county_start_and_end_points.length; i++) {
+      // start new border and seed with starting point
+      let new_border: Coordinate[] = [this.county_start_and_end_points[i][0]];
+      let current_point = new_border[0];
 
+      // generate midpoints
+      let n_steps = 30;
+      for (let j=0; j<n_steps; j++) {
+        let new_point: Coordinate = [0, 0];
+        // use a saftey count to make sure we don't get stuck in infinate loop
+        let safety_count = 0;
+        while (!this.context.isPointInPath(new_point[0], new_point[1])) {
+          new_point = this.getRandomIntermediatePoint(current_point, this.county_start_and_end_points[i][1], j, n_steps, -0.05, 0.05);
+
+          safety_count++;
+          if (safety_count > 10) {
+            // abandon
+            new_point = this.getNearestPoint(current_point, this.border_points);
+          }
+        }
+        new_border.push(new_point);
+        current_point = new_point;
+      }
+
+      // push end point
+      new_border.push(this.county_start_and_end_points[i][1]);
+      this.county_borders.push(new_border);
+    }
   }
 
   generateBorder() {
@@ -251,12 +290,14 @@ export class MapGen {
 
     for (let i=0; i<n_steps; i++) {
       let new_point: Coordinate = [0, 0];
+      // use a saftey count to make sure we don't get stuck in infinate loop
       safety_count = 0;
       while (!this.context.isPointInPath(new_point[0], new_point[1])) {
         new_point = this.getRandomIntermediatePoint(current_point, destination_point, i, n_steps, -0.1, 0.1);
 
         safety_count++;
         if (safety_count > 10) {
+          // abandon
           return [];
         }
       }
@@ -318,21 +359,14 @@ export class MapGen {
     this.context.strokeStyle = this.color_county_border;
     this.context.setLineDash(this.county_border_line_dash);
     this.context.lineWidth = this.county_border_line_width;
-    this.context.beginPath();
-    this.context.moveTo(this.inner_county_border_points[0][0], this.inner_county_border_points[0][1]);
-    for (let i=0; i<this.inner_county_border_points.length; i++) {
-        this.context.lineTo(this.inner_county_border_points[i][0], this.inner_county_border_points[i][1]);
-    }
-    this.context.closePath();
-    this.context.stroke();
-
-    // connect inner county border nodes to shore line
-    for (let i=0; i<this.inner_county_border_points.length; i++) {
+    
+    for (let i=0; i<this.county_borders.length; i++) {
         this.context.beginPath();
-        this.context.moveTo(this.inner_county_border_points[i][0], this.inner_county_border_points[i][1]);
-        let nearest_shore_point = this.getNearestPoint(this.inner_county_border_points[i], this.outer_county_border_points);
-        this.context.lineTo(nearest_shore_point[0], nearest_shore_point[1]);
-        this.context.stroke();
+        this.context.moveTo(this.county_borders[i][0][0], this.county_borders[i][0][1]);
+        for (let j=0; j<this.county_borders[i].length; j++) {
+          this.context.lineTo(this.county_borders[i][j][0], this.county_borders[i][j][1]);
+          this.context.stroke();
+        }
     }
     this.context.setLineDash([]);
 
@@ -363,6 +397,12 @@ export class MapGen {
     }
   }
 
+  fillTexture() {
+    var pattern = this.context.createPattern(this.background_texture, "no-repeat");
+    this.context.fillStyle = pattern;
+    this.context.fill();
+  }
+
   draw() {
     if (this.debug_mode) {
       this.draw_debug();
@@ -390,8 +430,9 @@ export class MapGen {
     this.plotIsPointInPathMethods();
 
     // fill land
-    this.context.fillStyle = this.color_land_green;
-    this.context.fill();
+    // this.context.fillStyle = this.color_land_green;
+    // this.context.fill();
+    this.fillTexture();
 
     // draw other features that rely on point in path method
     this.drawIsPointInPathMethods();
@@ -411,6 +452,12 @@ export class MapGen {
     // draw circle points
     for (let i=1; i<this.guide_points.length; i++) {
       point(this.guide_points[i][0], this.guide_points[i][1], 2, this.context);
+    }
+
+    // plot border start and end points
+    for (let i=0; i<this.county_start_and_end_points.length; i++) {
+      point(this.county_start_and_end_points[i][0][0], this.county_start_and_end_points[i][0][1], 2, this.context);
+      point(this.county_start_and_end_points[i][1][0], this.county_start_and_end_points[i][1][1], 2, this.context);
     }
 
     // draw circle center

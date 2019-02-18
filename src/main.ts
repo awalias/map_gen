@@ -13,8 +13,12 @@ const SUFFIXES = suffixes_json.names;
 
 var canvas = <HTMLCanvasElement> document.getElementById('map');
 var c = canvas.getContext('2d');
-var mg = new MapGen(c, NUMBER_OF_GUIDE_POINTS, MAP_RADIUS, DEBUG_MODE, NAMES, SUFFIXES);
+var background_texture = new Image();
+background_texture.src =  "../assets/bg" + rand(1,20) + ".png";
 
-mg.plot().then(function(){
-  mg.draw();
-})
+background_texture.onload = function() {
+  var mg = new MapGen(c, NUMBER_OF_GUIDE_POINTS, MAP_RADIUS, DEBUG_MODE, NAMES, SUFFIXES, background_texture);
+  mg.plot().then(function(){
+    mg.draw();
+  });
+}
