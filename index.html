@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Thousand Island Source</title>
 <meta charset="UTF-8">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
 </head>
 <body>
-<canvas id='map' height=600 width=600 />
+<canvas id='map' height=600 width=600></canvas>
+<a href="#" id='btn-regenerate'>Regenerate</a>
+<a href="#" id='btn-classic'>Classic</a>
+<a href="#" id='btn-retro'>Retro</a>
+<a href="#" id='btn-download' download="island_generator.jpg">Download</a>
 <script src="./build/bundle.js"></script>
+<style type="text/css">
+	canvas {
+		width: 500px;
+	}
+</style>
 </body>
 </html>
