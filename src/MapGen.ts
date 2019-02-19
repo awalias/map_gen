@@ -62,7 +62,10 @@ export class MapGen {
               debug_mode: boolean,
               city_label_dictionary: string[],
               city_label_suffixes: string[],
-              backgroud_texture: HTMLImageElement) {
+              backgroud_texture: HTMLImageElement,
+              sea_color: string,
+              road_color: string,
+              border_color: string) {
     this.context = context;
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
@@ -71,6 +74,9 @@ export class MapGen {
     this.city_label_suffixes = city_label_suffixes;
     this.circle_center_coord = [map_radius + this.circle_center_offset[0], map_radius + this.circle_center_offset[1]];
     this.background_texture = backgroud_texture;
+    this.color_sea_blue = sea_color,
+    this.color_motorway_main = road_color,
+    this.color_county_border = border_color
   }
 
   generateRandomGuidePoints() {
@@ -362,11 +368,10 @@ export class MapGen {
     
     for (let i=0; i<this.county_borders.length; i++) {
         this.context.beginPath();
-        this.context.moveTo(this.county_borders[i][0][0], this.county_borders[i][0][1]);
         for (let j=0; j<this.county_borders[i].length; j++) {
           this.context.lineTo(this.county_borders[i][j][0], this.county_borders[i][j][1]);
-          this.context.stroke();
         }
+        this.context.stroke();
     }
     this.context.setLineDash([]);
 
