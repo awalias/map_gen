@@ -12,20 +12,31 @@
 </head>
 <body>
 <div class="container">
-  <div class="row"><h1>Thousand Island Source</h1></div>
-  <div class="row" style="background-color: transparent;">
-    <canvas id='map' height=600 width=600></canvas>
+  <div class="row header">
+    <div><h1>Thousand Island Source</h1></div>
   </div>
   <div class="row" style="background-color: transparent;">
-    <a href="#" class="btn-lg btn-dark" id='btn-regenerate'>Regenerate</a>
-    <a href="#" class="btn-lg btn-dark" id='btn-classic'>Classic</a><a href="#" class="btn-lg btn-dark" id='btn-retro'>Retro</a>
-    <a href="#" class="btn-lg btn-dark" id='btn-download' download="island_generator.jpg">Download</a>
+    <div style="float: none; margin: 0 auto;">
+      <canvas id='map' height=600 width=600></canvas>
+    </div>
+  </div>
+  <div class="row" style="background-color: transparent;">
+    <div style="float: none; margin: 0 auto;">
+      <a href="#" class="btn-lg btn-light" id='btn-regenerate'>Regenerate</a>
+      <a href="#" class="btn-lg btn-light active" id='btn-classic'>Classic</a><a href="#" class="btn-lg btn-light" id='btn-retro'>Retro</a>
+      <a href="#" class="btn-lg btn-light" id='btn-download' download="island_generator.jpg">Download</a>
+    </div>
   </div>
 </div>
 <script src="./build/bundle.js"></script>
 <style type="text/css">
+  .header {
+    margin-top: 20px;
+  }
+
 	canvas {
 		width: 500px;
+    margin-bottom: 50px;
 	}
 
   #btn-classic {
@@ -42,6 +53,12 @@
 
   .btn-lg {
     margin-bottom: 20px;
+    border-radius: 2px;
+    padding: 20px;
+  }
+
+  .btn-lg:hover {
+    text-decoration: none;
   }
 </style>
 </body>

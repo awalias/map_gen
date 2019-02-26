@@ -15,10 +15,8 @@ window.onload = function() {
   var canvas = <HTMLCanvasElement> document.getElementById('map');
   var c = canvas.getContext('2d');
   var background_texture = new Image();
-  let texture_style = rand(0,1) ? "default" : "retro";
+  let texture_style = "default";
   background_texture.src =  "../assets/" + texture_style +"/bg" + rand(1,53) + ".png";
-
-  console.log(background_texture.src);
 
   let palette = {
     'default' : {
@@ -46,6 +44,17 @@ window.onload = function() {
   btn_download.addEventListener("click", (e:Event) => download_canvas(btn_download));
 
   function setStyle(tex: string) {
+    if (tex === "default") {
+      let btn_retro = document.getElementById("btn-retro");
+      let btn_classic = document.getElementById("btn-classic");
+      btn_retro.classList.remove("active");
+      btn_classic.classList.add("active");
+    } else {
+      let btn_retro = document.getElementById("btn-retro");
+      let btn_classic = document.getElementById("btn-classic");
+      btn_retro.classList.add("active");
+      btn_classic.classList.remove("active");
+    }
     texture_style = tex;
     regenerate();
   }
@@ -61,6 +70,7 @@ window.onload = function() {
   }
 
   background_texture.onload = function() {
+    document.body.style.backgroundColor = palette[texture_style]['sea'];
     var mg = new MapGen(c, NUMBER_OF_GUIDE_POINTS, MAP_RADIUS, DEBUG_MODE, NAMES, SUFFIXES,
       background_texture, palette[texture_style]['sea'], palette[texture_style]['road'], palette[texture_style]['border']);
     mg.plot().then(function(){
