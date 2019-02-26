@@ -2,20 +2,47 @@
 <html>
 <head>
 <title>Thousand Island Source</title>
-<meta charset="UTF-8">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-<canvas id='map' height=600 width=600></canvas>
-<a href="#" id='btn-regenerate'>Regenerate</a>
-<a href="#" id='btn-classic'>Classic</a>
-<a href="#" id='btn-retro'>Retro</a>
-<a href="#" id='btn-download' download="island_generator.jpg">Download</a>
+<div class="container">
+  <div class="row"><h1>Thousand Island Source</h1></div>
+  <div class="row" style="background-color: transparent;">
+    <canvas id='map' height=600 width=600></canvas>
+  </div>
+  <div class="row" style="background-color: transparent;">
+    <a href="#" class="btn-lg btn-dark" id='btn-regenerate'>Regenerate</a>
+    <a href="#" class="btn-lg btn-dark" id='btn-classic'>Classic</a><a href="#" class="btn-lg btn-dark" id='btn-retro'>Retro</a>
+    <a href="#" class="btn-lg btn-dark" id='btn-download' download="island_generator.jpg">Download</a>
+  </div>
+</div>
 <script src="./build/bundle.js"></script>
 <style type="text/css">
 	canvas {
 		width: 500px;
 	}
+
+  #btn-classic {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    margin-right: 0px;
+  }
+
+  #btn-retro {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-left: 0px;
+  }
+
+  .btn-lg {
+    margin-bottom: 20px;
+  }
 </style>
 </body>
 </html>
