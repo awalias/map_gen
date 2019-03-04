@@ -20,7 +20,7 @@ window.onload = function() {
   var c = canvas.getContext('2d');
   var background_texture = new Image();
   let texture_style = "default";
-  background_texture.src =  "../assets/" + texture_style +"/bg" + rand(1,53) + ".png";
+  background_texture.src =  "./assets/" + texture_style +"/bg" + rand(1,53) + ".png";
 
 
   let palette = {
@@ -71,7 +71,7 @@ window.onload = function() {
   }
 
   function regenerate() {
-    background_texture.src =  "../assets/" + texture_style +"/bg" + rand(1,53) + ".png";
+    background_texture.src =  "./assets/" + texture_style +"/bg" + rand(1,53) + ".png";
   }
 
   background_texture.onload = function() {

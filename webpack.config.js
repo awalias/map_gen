@@ -4,8 +4,8 @@ module.exports = {
   entry: ['babel-polyfill', './src/main.ts'],
   mode: 'development',
   "output": {
-    path: path.join(__dirname, 'build'),
-    publicPath: "/build/",
+    path: path.join(__dirname, 'dist/build'),
+    publicPath: "/dist/build/",
     "filename": "bundle.js"
   },
   resolve: {
