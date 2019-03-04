@@ -451,6 +451,8 @@ export class MapGen {
 
     // draw other features that rely on point in path method
     this.drawIsPointInPathMethods();
+
+    document.getElementById('map').style.visibility = '';
   }
 
   draw_debug() {

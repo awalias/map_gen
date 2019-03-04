@@ -65,14 +65,20 @@ window.onload = function() {
   }
 
   function download_canvas(el) {
-    mixpanel.track("Map downloaded");
+    mixpanel.track(
+      "Map downloaded",
+      {"texture_style": texture_style}
+      );
     var image = canvas.toDataURL("image/jpg");
     el.href = image;
     console.log(el);
   }
 
   function regenerate() {
-    mixpanel.track("New map generated");
+    mixpanel.track("New map generated",
+      {"texture_style": texture_style}
+      );
+    document.getElementById('map').style.visibility = 'hidden';
     background_texture.src =  "./assets/" + texture_style +"/bg" + rand(1,53) + ".png";
   }
 
