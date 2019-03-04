@@ -254,6 +254,7 @@ export class MapGen {
   generateMotorways() {
     for (let i=0; i<rand(this.motorways_min, this.motorways_max); i++) {
       this.motorways.push(this.generateMotorway());
+      console.log("gen motorway" + i.toString());
     }
   }
 
@@ -352,6 +353,7 @@ export class MapGen {
       this.context.strokeStyle = this.color_motorway_main;
       this.context.lineWidth = this.motorway_line_width;
       this.context.beginPath();
+      if (this.motorways[i].length === 0) { continue; } 
       this.context.moveTo(this.motorways[i][0][0], this.motorways[i][0][1]);
 
       // connect cirlce plot points
