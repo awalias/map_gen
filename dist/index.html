@@ -15,37 +15,16 @@ mixpanel.init("21a88079853d2e50927cd55f2a8d5226");</script><!-- end Mixpanel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-<body>
-<div class="container">
-  <div class="row header">
-    <div><h1>Thousand Island Source</h1></div>
-  </div>
-  <div class="row" style="background-color: transparent;">
-    <div style="float: none; margin: 0 auto;">
-      <div class="spinner"><img src="./assets/moai_round.gif"></img></div>
-      <canvas id='map' height=600 width=600></canvas>
-    </div>
-  </div>
-  <div class="row" style="background-color: transparent;">
-    <div style="float: none; margin: 0 auto;">
-      <a href="#" class="btn-lg btn-light" id='btn-regenerate'>Regenerate</a>
-      <a href="#" class="btn-lg btn-light active" id='btn-classic'>Classic</a><a href="#" class="btn-lg btn-light" id='btn-retro'>Retro</a>
-      <a href="#" class="btn-lg btn-light" id='btn-download' download="island_generator.jpg">Download</a>
-    </div>
-  </div>
-</div>
-<script src="./build/bundle.js"></script>
 <style type="text/css">
   .header {
     margin-top: 20px;
   }
 
-	canvas {
-		width: 500px;
+  canvas {
+    width: 500px;
     margin-bottom: 50px;
     z-index: 10;
-	}
+  }
 
   #btn-classic {
     border-top-right-radius: 0px;
@@ -119,5 +98,26 @@ mixpanel.init("21a88079853d2e50927cd55f2a8d5226");</script><!-- end Mixpanel -->
   }
 
 </style>
+</head>
+<body>
+<div class="container">
+  <div class="row header">
+    <div><h1>Thousand Island Source</h1></div>
+  </div>
+  <div class="row" style="background-color: transparent;">
+    <div style="float: none; margin: 0 auto;">
+      <div class="spinner"><img src="./assets/moai_round.gif"></img></div>
+      <canvas id='map' height=600 width=600></canvas>
+    </div>
+  </div>
+  <div class="row" style="background-color: transparent;">
+    <div style="float: none; margin: 0 auto;">
+      <a href="#" class="btn-lg btn-light" id='btn-regenerate'>Regenerate</a>
+      <a href="#" class="btn-lg btn-light active" id='btn-classic'>Classic</a><a href="#" class="btn-lg btn-light" id='btn-retro'>Retro</a>
+      <a href="#" class="btn-lg btn-light" id='btn-download' download="island_generator.jpg">Download</a>
+    </div>
+  </div>
+</div>
+<script src="./build/bundle.js"></script>
 </body>
 </html>
