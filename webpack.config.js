@@ -24,5 +24,9 @@ module.exports = {
       use: ["source-map-loader"],
       enforce: "pre"
     }]
+  },
+  devServer: {
+    port: 8080,
+    contentBase: path.join(__dirname, 'dist')
   }
 };
