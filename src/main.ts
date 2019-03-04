@@ -5,7 +5,9 @@ import {MapGen} from './MapGen';
 import names_json from './city_label_dictionary.json';
 import suffixes_json from './city_label_suffixes.json';
 
+window.label_font_size = 14;
 window.onload = function() {
+  window.dispatchEvent(new Event('resize'));
   const MAP_RADIUS = 250;
   const NUMBER_OF_GUIDE_POINTS = 15;
   const DEBUG_MODE = false;
@@ -17,6 +19,7 @@ window.onload = function() {
   var background_texture = new Image();
   let texture_style = "default";
   background_texture.src =  "../assets/" + texture_style +"/bg" + rand(1,53) + ".png";
+
 
   let palette = {
     'default' : {
@@ -72,9 +75,18 @@ window.onload = function() {
   background_texture.onload = function() {
     document.body.style.backgroundColor = palette[texture_style]['sea'];
     var mg = new MapGen(c, NUMBER_OF_GUIDE_POINTS, MAP_RADIUS, DEBUG_MODE, NAMES, SUFFIXES,
-      background_texture, palette[texture_style]['sea'], palette[texture_style]['road'], palette[texture_style]['border']);
+      background_texture, palette[texture_style]['sea'], palette[texture_style]['road'], palette[texture_style]['border'],
+      500, 500, label_font_size);
     mg.plot().then(function(){
       mg.draw();
     });
   }
 }
+
+window.addEventListener("resize", function() {
+  if (window.matchMedia("(min-width: 500px)").matches) {
+    window.label_font_size = 14;
+  } else {
+    window.label_font_size = 18;
+  }
+});

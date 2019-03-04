@@ -27,6 +27,9 @@ export class MapGen {
   private river_seed_max: number = 10;
   private lake_count_min: number = 0;
   private lake_count_max: number = 10;
+  private canvas_width_max: number = 500;
+  private canvas_height_max: number = 500;
+  private label_font_size: number = 14;
 
   private major_city_point_radius: number = 1.5;
   private minor_city_point_radius: number = 1.5;
@@ -65,7 +68,10 @@ export class MapGen {
               backgroud_texture: HTMLImageElement,
               sea_color: string,
               road_color: string,
-              border_color: string) {
+              border_color: string,
+              canvas_width_max: number,
+              canvas_height_max: number,
+              label_font_size: number) {
     this.context = context;
     this.number_of_guide_points = number_of_guide_points;
     this.map_radius = map_radius;
@@ -74,9 +80,12 @@ export class MapGen {
     this.city_label_suffixes = city_label_suffixes;
     this.circle_center_coord = [map_radius + this.circle_center_offset[0], map_radius + this.circle_center_offset[1]];
     this.background_texture = backgroud_texture;
-    this.color_sea_blue = sea_color,
-    this.color_motorway_main = road_color,
-    this.color_county_border = border_color
+    this.color_sea_blue = sea_color;
+    this.color_motorway_main = road_color;
+    this.color_county_border = border_color;
+    this.canvas_width_max = canvas_width_max;
+    this.canvas_height_max = canvas_height_max;
+    this.label_font_size = label_font_size;
   }
 
   generateRandomGuidePoints() {
@@ -219,8 +228,8 @@ export class MapGen {
   }
 
   getRandomPoint():Coordinate {
-    let point_x: number = rand(0, this.context.canvas.clientWidth);
-    let point_y: number = rand(0, this.context.canvas.clientHeight);
+    let point_x: number = rand(0, this.canvas_width_max);
+    let point_y: number = rand(0, this.canvas_height_max);
     return [point_x, point_y];
   }
 
@@ -254,7 +263,6 @@ export class MapGen {
   generateMotorways() {
     for (let i=0; i<rand(this.motorways_min, this.motorways_max); i++) {
       this.motorways.push(this.generateMotorway());
-      console.log("gen motorway" + i.toString());
     }
   }
 
@@ -380,7 +388,7 @@ export class MapGen {
     // draw major cities
     for (let i=0; i<this.major_cities.length; i++) {
       point(this.major_cities[i][0], this.major_cities[i][1], this.major_city_point_radius, this.context);
-      this.context.font = "14px Helvetica";
+      this.context.font = this.label_font_size.toString() + "px Helvetica";
 
       this.context.shadowColor = this.color_text_shadow;
       this.context.shadowBlur = 4;
@@ -393,7 +401,7 @@ export class MapGen {
     // draw minor cities
     for (let i=0; i<this.minor_cities.length; i++) {
       point(this.minor_cities[i][0], this.minor_cities[i][1], this.minor_city_point_radius, this.context);
-      this.context.font = "12px Helvetica";
+      this.context.font = this.label_font_size.toString() + "px Helvetica";
 
       this.context.shadowColor = this.color_text_shadow;
       this.context.shadowBlur = 4;
