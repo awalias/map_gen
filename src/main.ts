@@ -6,8 +6,10 @@ import names_json from './city_label_dictionary.json';
 import suffixes_json from './city_label_suffixes.json';
 
 window.label_font_size = 14;
+
 window.onload = function() {
   window.dispatchEvent(new Event('resize'));
+
   const MAP_RADIUS = 250;
   const NUMBER_OF_GUIDE_POINTS = 15;
   const DEBUG_MODE = false;
